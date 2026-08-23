@@ -3,9 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Classics site</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            color: #222;
+        }
+
+        header {
+            text-align: center;
+            padding: 50px 20px 30px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 40px;
+        }
+
+        header p {
+            color: #777;
+            margin-top: 10px;
+        }
+
+        .links {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .link {
+            display: block;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            text-decoration: none;
+            color: inherit;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            transition: 0.2s;
+        }
+
+        .link:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+
+        .link img {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .link-content {
+            padding: 15px;
+        }
+
+        .link-content h2 {
+            margin: 0 0 5px;
+            font-size: 20px;
+        }
+
+        .link-content p {
+            margin: 0;
+            color: #777;
+            font-size: 14px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+    </style>
 </head>
+
 <body>
-    <h1>ill put some stuff here later</h1>
+
+    <header>
+        <h1>my site</h1>
+        <p>i update it every once in awhile</p>
+    </header>
+
+    <main class="links" id="links"></main>
+
+    <footer>
+        © 2026 My Site
+    </footer>
+
+    <script>
+        // =========================
+        // ADD YOUR LINKS HERE
+        // =========================
+
+        const links = [
+            {
+                name: "Discord",
+                description: "Join my Discord server",
+                url: "https://classicisbetter.github.io/discord",
+                image: "images/discord.png"
+            },
+
+            // Add more like this:
+            //
+            // {
+            //     name: "My Project",
+            //     description: "A cool project I made",
+            //     url: "https://example.com",
+            //     image: "images/project.png"
+            // }
+        ];
+
+        // =========================
+        // DON'T NEED TO EDIT BELOW
+        // =========================
+
+        const container = document.getElementById("links");
+
+        links.forEach(link => {
+            const element = document.createElement("a");
+
+            element.className = "link";
+            element.href = link.url;
+            element.target = "_blank";
+            element.rel = "noopener noreferrer";
+
+            element.innerHTML = `
+                <img src="${link.image}" alt="${link.name}">
+                <div class="link-content">
+                    <h2>${link.name}</h2>
+                    <p>${link.description}</p>
+                </div>
+            `;
+
+            container.appendChild(element);
+        });
+    </script>
+
 </body>
 </html>
