@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Games</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #0f1115;
+            color: #fff;
+        }
+
+        header {
+            text-align: center;
+            padding: 35px 20px 20px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 36px;
+        }
+
+        header p {
+            color: #888;
+        }
+
+        .games {
+            max-width: 900px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        .game-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        button {
+            border: 1px solid #30343d;
+            background: #181b21;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        button:hover {
+            background: #242831;
+        }
+
+        button.active {
+            background: #303640;
+        }
+
+        .game {
+            display: none;
+            background: #181b21;
+            border: 1px solid #252932;
+            border-radius: 14px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .game.active {
+            display: block;
+        }
+
+        canvas {
+            display: block;
+            margin: 15px auto;
+            background: #090b0e;
+            border: 1px solid #30343d;
+            border-radius: 8px;
+            max-width: 100%;
+        }
+
+        .info {
+            color: #888;
+            font-size: 14px;
+        }
+
+        .score {
+            font-size: 24px;
+            margin: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Mini Games</h1>
+    <p>Pick a game and have fun.</p>
+</header>
+
+<div class="games">
+
+    <div class="game-buttons">
+        <button class="active" onclick="showGame('snake', this)">Snake</button>
+        <button onclick="showGame('pong', this)">Pong</button>
+    </div>
+
+    <!-- SNAKE -->
+    <div id="snake" class="game active">
+        <h2>Snake</h2>
+
+        <div class="score">
+            Score: <span id="snakeScore">0</span>
+        </div>
+
+        <canvas id="snakeCanvas" width="400" height="400"></canvas>
+
+        <p class="info">
+            Use the arrow keys or WASD to move.
+        </p>
+
+        <button onclick="startSnake()">Restart</button>
+    </div>
+
+    <!-- PONG -->
+    <div id="pong" class="game">
+        <h2>Pong</h2>
+
+        <div class="score">
+            <span id="playerScore">0</span>
+            -
+            <span id="computerScore">0</span>
+        </div>
+
+        <canvas id="pongCanvas" width="700" height="400"></canvas>
+
+        <p class="info">
+            Use W/S or ↑/↓ to move your paddle.
+        </p>
+
+        <button onclick="startPong()">Restart</button>
+    </div>
+
+</div>
+
+<script>
+/* =========================
+   GAME SELECTOR
+========================= */
+
+function showGame(game, button) {
+    document.querySelectorAll(".game").forEach(g => {
+        g.classList.remove("active");
+    });
+
+    document.querySelectorAll(".game-buttons button").forEach(b => {
+        b.classList.remove("active");
+    });
+
+    document.getElementById(game).classList.add("active");
+    button.classList.add("active");
+}
+
+
+/* =========================
+   SNAKE
+========================= */
+
+const snakeCanvas = document.getElementById("snakeCanvas");
+const snakeCtx = snakeCanvas.getContext("2d");
+
+const gridSize = 20;
+const tileCount = snakeCanvas.width / gridSize;
+
+let snake;
+let food;
+let snakeDirection;
+let nextDirection;
+let snakeScore = 0;
+let snakeRunning = false;
+let snakeLoop;
+
+function startSnake() {
+    clearInterval(snakeLoop);
+
+    snake = [
+        { x: 10, y: 10 }
+    ];
+
+    food = {
+        x: Math.floor(Math.random() * tileCount),
+        y: Math.floor(Math.random() * tileCount)
+    };
+
+    snakeDirection = {
+        x: 1,
+        y: 0
+    };
+
+    nextDirection = {
+        x: 1,
+        y: 0
+    };
+
+    snakeScore = 0;
+    snakeRunning = true;
+
+    document.getElementById("snakeScore").textContent = snakeScore;
+
+    snakeLoop = setInterval(updateSnake, 100);
+}
+
+function updateSnake() {
+    snakeDirection = nextDirection;
+
+    const head = {
+        x: snake[0].x + snakeDirection.x,
+        y: snake[0].y + snakeDirection.y
+    };
+
+    // Wall collision
+    if (
+        head.x < 0 ||
+        head.x >= tileCount ||
+        head.y < 0 ||
+        head.y >= tileCount
+    ) {
+        endSnake();
+        return;
+    }
+
+    // Self collision
+    for (let i = 0; i < snake.length; i++) {
+        if (
+            head.x === snake[i].x &&
+            head.y === snake[i].y
+        ) {
+            endSnake();
+            return;
+        }
+    }
+
+    snake.unshift(head);
+
+    // Eat food
+    if (
+        head.x === food.x &&
+        head.y === food.y
+    ) {
+        snakeScore++;
+
+        document.getElementById("snakeScore").textContent =
+            snakeScore;
+
+        spawnFood();
+    } else {
+        snake.pop();
+    }
+
+    drawSnake();
+}
+
+function spawnFood() {
+    food = {
+        x: Math.floor(Math.random() * tileCount),
+        y: Math.floor(Math.random() * tileCount)
+    };
+}
+
+function drawSnake() {
+    snakeCtx.clearRect(
+        0,
+        0,
+        snakeCanvas.width,
+        snakeCanvas.height
+    );
+
+    // Food
+    snakeCtx.fillStyle = "#ff4d6d";
+
+    snakeCtx.fillRect(
+        food.x * gridSize,
+        food.y * gridSize,
+        gridSize,
+        gridSize
+    );
+
+    // Snake
+    snakeCtx.fillStyle = "#4ade80";
+
+    snake.forEach((part, index) => {
+        snakeCtx.fillRect(
+            part.x * gridSize,
+            part.y * gridSize,
+            gridSize - 2,
+            gridSize - 2
+        );
+    });
+}
+
+function endSnake() {
+    snakeRunning = false;
+    clearInterval(snakeLoop);
+
+    drawSnake();
+
+    setTimeout(() => {
+        alert("Game over! Score: " + snakeScore);
+    }, 50);
+}
+
+document.addEventListener("keydown", event => {
+
+    // Snake controls
+    if (
+        event.key === "ArrowUp" ||
+        event.key.toLowerCase() === "w"
+    ) {
+        if (snakeDirection.y !== 1) {
+            nextDirection = { x: 0, y: -1 };
+        }
+    }
+
+    if (
+        event.key === "ArrowDown" ||
+        event.key.toLowerCase() === "s"
+    ) {
+        if (snakeDirection.y !== -1) {
+            nextDirection = { x: 0, y: 1 };
+        }
+    }
+
+    if (
+        event.key === "ArrowLeft" ||
+        event.key.toLowerCase() === "a"
+    ) {
+        if (snakeDirection.x !== 1) {
+            nextDirection = { x: -1, y: 0 };
+        }
+    }
+
+    if (
+        event.key === "ArrowRight" ||
+        event.key.toLowerCase() === "d"
+    ) {
+        if (snakeDirection.x !== -1) {
+            nextDirection = { x: 1, y: 0 };
+        }
+    }
+
+    // Pong controls
+    if (event.key.toLowerCase() === "w" || event.key === "ArrowUp") {
+        pongUp = true;
+    }
+
+    if (event.key.toLowerCase() === "s" || event.key === "ArrowDown") {
+        pongDown = true;
+    }
+});
+
+
+/* =========================
+   PONG
+========================= */
+
+const pongCanvas = document.getElementById("pongCanvas");
+const pongCtx = pongCanvas.getContext("2d");
+
+let playerScore = 0;
+let computerScore = 0;
+
+let playerY;
+let computerY;
+
+let pongBall;
+
+let pongUp = false;
+let pongDown = false;
+
+let pongRunning = false;
+let pongAnimation;
+
+function startPong() {
+    cancelAnimationFrame(pongAnimation);
+
+    playerScore = 0;
+    computerScore = 0;
+
+    document.getElementById("playerScore").textContent = playerScore;
+    document.getElementById("computerScore").textContent = computerScore;
+
+    playerY = pongCanvas.height / 2 - 50;
+    computerY = pongCanvas.height / 2 - 50;
+
+    pongBall = {
+        x: pongCanvas.width / 2,
+        y: pongCanvas.height / 2,
+        size: 10,
+        speedX: 5,
+        speedY: 3
+    };
+
+    pongRunning = true;
+
+    pongLoop();
+}
+
+function pongLoop() {
+    if (!pongRunning) return;
+
+    updatePong();
+    drawPong();
+
+    pongAnimation = requestAnimationFrame(pongLoop);
+}
+
+function updatePong() {
+
+    // Player movement
+    if (pongUp) {
+        playerY -= 6;
+    }
+
+    if (pongDown) {
+        playerY += 6;
+    }
+
+    playerY = Math.max(
+        0,
+        Math.min(pongCanvas.height - 100, playerY)
+    );
+
+    // Computer AI
+    const computerCenter = computerY + 50;
+
+    if (computerCenter < pongBall.y) {
+        computerY += 4;
+    }
+
+    if (computerCenter > pongBall.y) {
+        computerY -= 4;
+    }
+
+    computerY = Math.max(
+        0,
+        Math.min(pongCanvas.height - 100, computerY)
+    );
+
+    // Ball movement
+    pongBall.x += pongBall.speedX;
+    pongBall.y += pongBall.speedY;
+
+    // Top/bottom collision
+    if (
+        pongBall.y <= 0 ||
+        pongBall.y >= pongCanvas.height - pongBall.size
+    ) {
+        pongBall.speedY *= -1;
+    }
+
+    // Player paddle
+    if (
+        pongBall.x <= 30 &&
+        pongBall.x >= 20 &&
+        pongBall.y + pongBall.size >= playerY &&
+        pongBall.y <= playerY + 100
+    ) {
+        pongBall.speedX = Math.abs(pongBall.speedX);
+    }
+
+    // Computer paddle
+    if (
+        pongBall.x + pongBall.size >= pongCanvas.width - 30 &&
+        pongBall.x <= pongCanvas.width - 20 &&
+        pongBall.y + pongBall.size >= computerY &&
+        pongBall.y <= computerY + 100
+    ) {
+        pongBall.speedX = -Math.abs(pongBall.speedX);
+    }
+
+    // Player missed
+    if (pongBall.x < -20) {
+        computerScore++;
+
+        document.getElementById("computerScore").textContent =
+            computerScore;
+
+        resetBall();
+
+        if (computerScore >= 5) {
+            endPong();
+        }
+    }
+
+    // Computer missed
+    if (pongBall.x > pongCanvas.width + 20) {
+        playerScore++;
+
+        document.getElementById("playerScore").textContent =
+            playerScore;
+
+        resetBall();
+
+        if (playerScore >= 5) {
+            endPong();
+        }
+    }
+}
+
+function resetBall() {
+    pongBall.x = pongCanvas.width / 2;
+    pongBall.y = pongCanvas.height / 2;
+
+    pongBall.speedX =
+        Math.random() > 0.5 ? 5 : -5;
+
+    pongBall.speedY =
+        Math.random() > 0.5 ? 3 : -3;
+}
+
+function drawPong() {
+
+    pongCtx.clearRect(
+        0,
+        0,
+        pongCanvas.width,
+        pongCanvas.height
+    );
+
+    // Player
+    pongCtx.fillStyle = "#ffffff";
+
+    pongCtx.fillRect(
+        20,
+        playerY,
+        10,
+        100
+    );
+
+    // Computer
+    pongCtx.fillRect(
+        pongCanvas.width - 30,
+        computerY,
+        10,
+        100
+    );
+
+    // Ball
+    pongCtx.fillRect(
+        pongBall.x,
+        pongBall.y,
+        pongBall.size,
+        pongBall.size
+    );
+
+    // Middle line
+    pongCtx.setLineDash([8, 8]);
+    pongCtx.strokeStyle = "#444";
+    pongCtx.beginPath();
+    pongCtx.moveTo(
+        pongCanvas.width / 2,
+        0
+    );
+    pongCtx.lineTo(
+        pongCanvas.width / 2,
+        pongCanvas.height
+    );
+    pongCtx.stroke();
+    pongCtx.setLineDash([]);
+}
+
+function endPong() {
+    pongRunning = false;
+
+    setTimeout(() => {
+        const winner =
+            playerScore >= 5
+                ? "You win!"
+                : "Computer wins!";
+
+        alert(winner);
+    }, 50);
+}
+
+document.addEventListener("keyup", event => {
+
+    if (
+        event.key.toLowerCase() === "w" ||
+        event.key === "ArrowUp"
+    ) {
+        pongUp = false;
+    }
+
+    if (
+        event.key.toLowerCase() === "s" ||
+        event.key === "ArrowDown"
+    ) {
+        pongDown = false;
+    }
+});
+
+
+/* Start Snake automatically */
+startSnake();
+</script>
+
+</body>
+</html>
