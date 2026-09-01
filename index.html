@@ -1,13 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Links</title>
+    <title>classics page</title>
+
     <style>
         body {
             background: #111;
             color: white;
             font-family: Arial, sans-serif;
             padding: 40px;
+        }
+
+        p {
+            font-size: 24px;
+        }
+
+        img {
+            display: block;
+            max-width: 500px;
+            max-height: 400px;
+            margin: 20px 0;
+            border-radius: 8px;
         }
 
         a {
@@ -24,7 +37,25 @@
         }
     </style>
 </head>
+
 <body>
+
+    <p>this is my site</p>
+
+    <img id="randomImage">
+
+    <script>
+        const images = [
+            "images/1.png",
+            "images/2.png",
+            "images/3.png",
+            "images/4.jpg"
+        ];
+
+        const randomImage = images[Math.floor(Math.random() * images.length)];
+
+        document.getElementById("randomImage").src = randomImage;
+    </script>
 
     <a href="https://discord.gg/4UczSaa4AJ">> Discord</a>
     <a href="#">> Link 2</a>
