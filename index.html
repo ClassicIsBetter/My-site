@@ -1,131 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>classics page</title>
-
+    <title>Links</title>
     <style>
-        * {
-            box-sizing: border-box;
-        }
-
         body {
-            margin: 0;
+            background: #111;
+            color: white;
             font-family: Arial, sans-serif;
-            background: #0f1115;
-            color: #f1f1f1;
+            padding: 40px;
         }
 
-        header {
-            text-align: center;
-            padding: 50px 20px 30px;
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: 40px;
-        }
-
-        header p {
-            color: #8b8f98;
-            margin-top: 10px;
-        }
-
-        .links {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 20px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-        }
-
-        .link {
+        a {
             display: block;
-            padding: 18px;
-
-            background: #181b21;
-            border: 1px solid #252932;
-            border-radius: 12px;
-
+            color: white;
             text-decoration: none;
-            color: inherit;
-
-            transition: 0.2s;
+            font-size: 20px;
+            margin: 15px 0;
+            transition: transform 0.2s;
         }
 
-        .link:hover {
-            transform: translateY(-3px);
-            background: #1d2027;
-            border-color: #353a45;
-        }
-
-        .link-content {
-            padding: 0;
-        }
-
-        .link-content h2 {
-            margin: 0 0 5px;
-            font-size: 18px;
-        }
-
-        .link-content p {
-            margin: 0;
-            color: #8b8f98;
-            font-size: 14px;
+        a:hover {
+            transform: translateX(10px);
         }
     </style>
 </head>
-
 <body>
 
-    <header>
-        <h1>classics page</h1>
-        <p>template page totally not made by ai untill i get my old page back</p>
-    </header>
-
-    <main class="links" id="links"></main>
-
-    <script>
-
-
-        const links = [
-            {
-                name: "Socials",
-                description: "contact me and stuff",
-                url: "/socials/"
-            },
-
-            {
-                name: "Projects",
-                description: "some games i made",
-                url: "/projects/"
-            },
-
-        ];
-
-
-
-        const container = document.getElementById("links");
-
-        links.forEach(link => {
-            const element = document.createElement("a");
-
-            element.className = "link";
-            element.href = link.url;
-
-            element.innerHTML = `
-                <div class="link-content">
-                    <h2>${link.name}</h2>
-                    <p>${link.description}</p>
-                </div>
-            `;
-
-            container.appendChild(element);
-        });
-    </script>
+    <a href="https://discord.gg/4UczSaa4AJ">> Discord</a>
+    <a href="#">> Link 2</a>
+    <a href="#">> Link 3</a>
+    <a href="#">> Link 4</a>
 
 </body>
 </html>
